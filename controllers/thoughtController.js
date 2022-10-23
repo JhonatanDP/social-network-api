@@ -63,8 +63,22 @@ module.exports = {
       )
       .then((user) =>
         !user
-          ? res.status(404).json({ message: 'User no found but Thought deleted'})
+          ? res.status(404).json({ message: 'User no found but thought deleted'})
           : res.json({ message: 'Thought deleted' })
+      )
+      .catch((err) => res.status(500).json(err));
+  },
+
+  createReaction(req, res) {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $addToSet: { reactions: req.body } },
+      { runValidators: true, new: true }
+    )
+      .then((thought) =>
+        !thought
+          ? res.status(404).json({ message: "No thought found" })
+          : res.json(thought)
       )
       .catch((err) => res.status(500).json(err));
   },
